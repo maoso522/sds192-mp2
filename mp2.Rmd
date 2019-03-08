@@ -29,6 +29,8 @@ glimpse(house_elections)
 ```
 
 
-
+```{r}
+str(house_elections)
+```
 
 
