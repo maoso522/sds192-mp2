@@ -1,6 +1,6 @@
 ---
-title: "Mini-Project 2"
-author: "Your Name Here"
+title: "Mini Project Two"
+author: "Teniel Rhiney, Marcela Osorio, Nicole Lawler"
 date: "2019-03-24"
 output: 
   html_document:
