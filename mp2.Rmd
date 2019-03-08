@@ -24,7 +24,8 @@ load("contributions.rda")
 
 
 ```{r }
-
+library(tidyverse)
+glimpse(house_elections)
 ```
 
 
