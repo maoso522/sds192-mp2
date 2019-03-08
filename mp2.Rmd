@@ -1,6 +1,6 @@
 ---
-title: "Mini Project Two"
-author: "Teniel Rhiney, Marcela Osorio, Nicole Lawler"
+title: "Mini-Project 2"
+author: "Marcela Osorio, Tenil Rhiney, Nicole Lawler"
 date: "2019-03-24"
 output: 
   html_document:
@@ -21,3 +21,13 @@ load("contributions.rda")
 ```
 
 > Word count: `r wordcountaddin::word_count()`
+
+
+```{r }
+
+```
+
+
+
+
+
