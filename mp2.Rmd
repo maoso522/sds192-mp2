@@ -1,6 +1,6 @@
 ---
 title: "Mini-Project 2"
-author: "Marcela Osorio, Tenil Rhiney, Nicole Lawler"
+author: "Marcela Osorio, Tenil Rhiney"
 date: "2019-03-24"
 output: 
   html_document:
@@ -37,6 +37,27 @@ str(house_elections)
 ```{r}
 str(candidates)
 ```
+```{r}
+candidates <- as_tibble(candidates) 
+candidates
+```
+
+```{r}
+
+cc <- candidates %>%
+  select("cand_id", "cand_name", "cand_state", "cand_party_affiliation")
+cc
+
+
+```
+
+
+
+
+
+
+
+
 
 ```{r}
 str(contributions)
@@ -44,7 +65,8 @@ str(contributions)
 
 
 ```{r}
-glimpse(contributions)
+contributions <- as_tibble(contributions) 
+contributions
 ```
 
 
