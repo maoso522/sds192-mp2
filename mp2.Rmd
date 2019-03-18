@@ -43,6 +43,9 @@ str(contributions)
 ```
 
 
+```{r}
+glimpse(contributions)
+```
 
 
 
