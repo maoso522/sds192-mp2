@@ -34,3 +34,17 @@ str(house_elections)
 ```
 
 
+```{r}
+str(candidates)
+```
+
+```{r}
+str(contributions)
+```
+
+
+
+
+
+
+
