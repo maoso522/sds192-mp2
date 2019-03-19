@@ -76,7 +76,7 @@ cb
 
 new_data <- cc %>%
   inner_join(cb, by = "cand_id") %>%
-  filter(cand_party_affiliation == "UNK", "GRE", "IND", "LIB", "NNE")
+  filter(cand_party_affiliation != "UNK", "GRE", "IND", "LIB", "NNE")
   
 
 ```
