@@ -1,10 +1,6 @@
 ---
 title: "Mini-Project 2"
-<<<<<<< HEAD
-author: "Marcela Osorio, Teniel Rhiney, Nicole Lawler"
-=======
 author: "Marcela Osorio and Teniel Rhiney"
->>>>>>> 684a07bfd85a1393cdb831c22a97f54258bb1310
 date: "2019-03-24"
 output: 
   html_document:
@@ -14,8 +10,7 @@ output:
 
 ## Loading the data
 
-<<<<<<< HEAD
-This project is so interesting and relevant to my life,not really!
+<<<<<<< Who are te individulas that support indep. candidates?
 
 
 
@@ -52,6 +47,9 @@ cc <- candidates %>%
 cc
 ```
 
+
+## EDA 
+
 ```{r}
 graph_one <- ggplot(data = cc, aes(x = cand_party_affiliation)) +
   geom_bar()
@@ -68,13 +66,18 @@ contributions
 
 ```{r}
 cb <- contributions %>%
-  select("cand_id", "transaction_type", "transaction_amt", "name", "entity_type", "state") %>%
+  select("cand_id", "transaction_type", "transaction_amt", "name","state") %>%
   filter(state == "MA")
 cb
 
 ```
 
 ```{r}
+
+new_data <- cc %>%
+  inner_join(cb, by = "cand_id") %>%
+  filter(cand_party_affiliation == "UNK", "GRE", "IND", "LIB", "NNE")
+  
 
 ```
 
