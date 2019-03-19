@@ -14,10 +14,15 @@ output:
 
 ## Loading the data
 
+<<<<<<< HEAD
 This project is so interesting and relevant to my life,not really!
 
-```{r, message=FALSE}
+
+
+```{r, warning = FALSE, message=FALSE}
+
 library(tidyverse)
+library(ggplot2)
 load("house_elections.rda")
 load("candidates.rda")
 load("committees.rda")
@@ -27,6 +32,13 @@ load("contributions.rda")
 > Word count: `r wordcountaddin::word_count()`
 
 
+For more information please visit  ^[“sds192-mp2 repository” _GitHub_. https://github.com/beanumber/sds192-mp2. Accessed 8 March. 2019]
+
+
+**Important:** We need to write annotations  
+
+We are creating a new dataset with the variable that we are going to explore. 
+
 
 ```{r}
 candidates <- as_tibble(candidates) 
@@ -34,13 +46,18 @@ candidates
 ```
 
 ```{r}
-
 cc <- candidates %>%
-  select("cand_id", "cand_name", "cand_state", "cand_party_affiliation")
+  select("cand_id", "cand_name", "cand_state", "cand_party_affiliation", "cand_election_yr") %>%
+  filter(cand_state == "MA")
 cc
-
-
 ```
+
+```{r}
+graph_one <- ggplot(data = cc, aes(x = cand_party_affiliation)) +
+  geom_bar()
+graph_one
+```
+
 
 
 
@@ -49,7 +66,17 @@ contributions <- as_tibble(contributions)
 contributions
 ```
 
+```{r}
+cb <- contributions %>%
+  select("cand_id", "transaction_type", "transaction_amt", "name", "entity_type", "state") %>%
+  filter(state == "MA")
+cb
 
+```
+
+```{r}
+
+```
 
 
 
