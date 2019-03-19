@@ -1,10 +1,14 @@
 ---
 title: "Mini-Project 2"
+<<<<<<< HEAD
 author: "Marcela Osorio, Teniel Rhiney, Nicole Lawler"
+=======
+author: "Marcela Osorio and Teniel Rhiney"
+>>>>>>> 684a07bfd85a1393cdb831c22a97f54258bb1310
 date: "2019-03-24"
 output: 
   html_document:
-    code_folding: show
+    code_folding: hide
 ---
 
 
@@ -23,28 +27,26 @@ load("contributions.rda")
 > Word count: `r wordcountaddin::word_count()`
 
 
-```{r }
-library(tidyverse)
-glimpse(house_elections)
-```
-
 
 ```{r}
-str(house_elections)
-```
-
-
-```{r}
-str(candidates)
+candidates <- as_tibble(candidates) 
+candidates
 ```
 
 ```{r}
-str(contributions)
+
+cc <- candidates %>%
+  select("cand_id", "cand_name", "cand_state", "cand_party_affiliation")
+cc
+
+
 ```
 
 
+
 ```{r}
-glimpse(contributions)
+contributions <- as_tibble(contributions) 
+contributions
 ```
 
 
