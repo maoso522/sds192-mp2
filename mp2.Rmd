@@ -76,10 +76,26 @@ cb
 
 new_data <- cc %>%
   inner_join(cb, by = "cand_id") %>%
-  filter(cand_party_affiliation != "UNK", "GRE", "IND", "LIB", "NNE")
+  filter(cand_party_affiliation!= "DEM", cand_party_affiliation!= "REP")
   
-
 ```
 
+```{r}
+graphtwo<-ggplot(new_data, aes(x= cand_name, y= transaction_amt, col = cand_party_affiliation))+
+  geom_jitter()
+graphtwo
+```
 
+```{r}
+ graphthree<-new_data %>%
+  group_by(cand_name, cand_party_affiliation) %>%
+  summarize(total = sum(transaction_amt), total_donations = n())
+graphthree
+```
+
+```{r}
+ggplot(graphthree, aes(x= cand_name, y= total, fill= cand_party_affiliation))+
+  geom_col()
+
+```
 
