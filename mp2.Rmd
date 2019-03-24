@@ -8,12 +8,6 @@ output:
 ---
 
 
-## Loading the data
-
-<<<<<<< Who are te individulas that support indep. candidates?
-
-
-
 ```{r, warning = FALSE, message=FALSE}
 
 library(tidyverse)
@@ -22,80 +16,133 @@ load("house_elections.rda")
 load("candidates.rda")
 load("committees.rda")
 load("contributions.rda")
+devtools::install_github("benmarwick/wordcountaddin")
+
 ```
 
 > Word count: `r wordcountaddin::word_count()`
 
 
-For more information please visit  ^[“sds192-mp2 repository” _GitHub_. https://github.com/beanumber/sds192-mp2. Accessed 8 March. 2019]
-
-
-**Important:** We need to write annotations  
-
-We are creating a new dataset with the variable that we are going to explore. 
-
-
 ```{r}
-candidates <- as_tibble(candidates) 
-candidates
+candidates <- as_tibble(candidates)
 ```
+
+
+- We are created a new dataset called `cc` from the `candidates` data set by selecting the variables: "cand_id", "cand_name", "cand_state", "cand_party_affiliation", "cand_election_yr".
+
 
 ```{r}
 cc <- candidates %>%
-  select("cand_id", "cand_name", "cand_state", "cand_party_affiliation", "cand_election_yr") %>%
-  filter(cand_state == "MA")
-cc
-```
+  select("cand_id", "cand_name", "cand_state", "cand_party_affiliation", "cand_election_yr")
 
-
-## EDA 
-
-```{r}
-graph_one <- ggplot(data = cc, aes(x = cand_party_affiliation)) +
-  geom_bar()
-graph_one
-```
-
-
-
-
-```{r}
 contributions <- as_tibble(contributions) 
-contributions
 ```
+
+
+- We are created a new dataset called `cb` from the `contributions` data by selecting the variables: "cand_id", "transaction_type", "transaction_amt", "name","state".
 
 ```{r}
 cb <- contributions %>%
-  select("cand_id", "transaction_type", "transaction_amt", "name","state") %>%
-  filter(state == "MA")
-cb
-
+  select("cand_id", "transaction_type", "transaction_amt", "name","state")
 ```
 
-```{r}
 
+- We joined `cc` data set and `cb` data set by the `cand_id` variable.
+
+```{r}
+new_data_original_join <- cc %>%
+  inner_join(cb, by = "cand_id") 
+```
+
+
+- Function to find the total number of donations and total amount of dollars collected by political parties within the specify state.
+
+
+```{r}
+ne_states <- c("CT", "DE", "NJ", "NY", "PA", "RI", "VT", "MD", "NH", "ME", "MA") %>%
+enframe(name = "actual_rank", value = "cand_state")
+ne_states
+
+amount_state <-  function(name_arg) {
+  new_data_original_join %>%
+    filter(cand_state == name_arg) %>%
+    inner_join(ne_states, by=c("cand_state" = "cand_state"))%>%
+    group_by(cand_party_affiliation) %>%
+    summarize(total = sum(transaction_amt), total_donations = n())
+}
+
+amount_state(name_arg = "MA")
+```
+
+
+- `new_data` that only includes the states from the Northeast Region
+
+
+```{r}
 new_data <- cc %>%
   inner_join(cb, by = "cand_id") %>%
-  filter(cand_party_affiliation!= "DEM", cand_party_affiliation!= "REP")
+  group_by(cand_state, cand_party_affiliation) %>%
+  summarize(total = sum(transaction_amt), total_donations = n()) %>%
+  filter(cand_state %in% c("CT", "DE", "NJ", "NY", "PA", "RI", "VT", "MD", "NH", "ME", "MA")) %>%
+  filter(cand_party_affiliation != "UNK") %>%
+  filter(cand_party_affiliation != "LIB") %>%
+  filter(total >= 0)
+```
+
+
+- Graph one displays the total donations based on committees in the Northeast Region.
+
+```{r warning= FALSE}
+
+c4 = c("blue", "green", "purple", "pink", "red", "yellow", "cyan")
+
+amount_state_graph <- ggplot(data = new_data, aes(y = total, 
+                                                  x = cand_party_affiliation, 
+                                                  fill = cand_party_affiliation)) +
   
+  geom_bar(stat = "identity") +
+  scale_y_continuous(name = "Total Donations ($)", trans = "log10") +
+  scale_color_manual(values = c4, aesthetics = c("colour", "fill")) +
+  facet_wrap(~cand_state) +
+  labs(x = "Political Party Affiliation", title = "Total Donations Based on Committees 
+       in the Northeast Region")
+amount_state_graph
+
 ```
+
+
+- `new_data_all` contains only information about the state of New York excluding the Democratic and Republican parties.
+
 
 ```{r}
-graphtwo<-ggplot(new_data, aes(x= cand_name, y= transaction_amt, col = cand_party_affiliation))+
-  geom_jitter()
-graphtwo
+new_data_all <- new_data_original_join %>%
+  select(cand_name, cand_state, name, transaction_type, transaction_amt,
+         cand_party_affiliation, cand_election_yr) %>%
+  filter(cand_state == "NY") %>%
+  filter(cand_party_affiliation != "REP") %>%
+  filter(cand_party_affiliation != "DEM") %>%
+  filter(transaction_amt >= 0)
 ```
+
+
+-Graph two displays the relationship between commmitees, total donations received, and the transaction type. 
 
 ```{r}
- graphthree<-new_data %>%
-  group_by(cand_name, cand_party_affiliation) %>%
-  summarize(total = sum(transaction_amt), total_donations = n())
-graphthree
-```
-
-```{r}
-ggplot(graphthree, aes(x= cand_name, y= total, fill= cand_party_affiliation))+
-  geom_col()
+ggplot(data = new_data_all, aes(x = transaction_amt, y = name, 
+                                color = transaction_type)) +
+  geom_point(size = 0.5) +
+  scale_x_continuous(name = "Total Donations ($)", trans = "log10") +
+  labs(y = "Names of Committees", title = "Total Donations Based on Committees 
+       in the of State New York")
 
 ```
+
+
+For this project, we cloned the original Github Repository and created a new pathway that allowed team members to collaborate on the project directly ^[“maoso522/sds192-mp2 repository” _GitHub_. https://github.com/maoso522/sds192-mp2/commits/master. Accessed 8 March. 2019].
+After analyzing each one of the data sets provided by Federal Election Commission ^[Federal Election Commission."Detailed Files About Candidates, Parties and Other Committes https://classic.fec.gov/finance/disclosure/ftpdet.shtml#archive_link. Accessed 8 March.2019]. We found out that the candidates and contributions data sets derived from the 2011–2012 federal election cycle reveals an insightful relationship between party affiliation and donation amount in the Northeast Region. To visualize this relationship, we selected from the candidates date set the variables: `cand_id`, `cand_name`, `cand_state`, `cand_party_affiliation`,  and `cand_election_yr`. Then,  from the contributions data set we chose the variables: `cand_id`,` transaction_type`, `transaction_amt`, `cmte_name` and `cand_state`. Upon exploring the data, we noticed that both data sets `candidates` and `contributions` had the same variable, `cand_id`, which we used to join both tables.  As a result, we created a new data set called `new_data`. From the new data set, we created a `total_donations` column, which combines the frequency of donations to a committee and a `total` column, which adds the total amount of dollars that each political party collected by the state. However, we created a function called, `amount_state` that allows us to see the total amount of dollars collected by the political parties and the number of donations according to the state. In this manner, this function simplifies the operation by automatically applying the same steps to the specify state.   
+  
+For the first data visualization, we created a bar graph that depicts the total amount of donations on the y-axis and the candidate party affiliation on the x-axis. Since we wanted to focus on the northeast region, we used the function to `facet_wrap` by a state to identify which states supported most alternative political parties. The data graphic illustrates significant differences in the amount of contributions that each political party received by the state. For example,  CT, DE, MD, NH only collected donations for the Republican and Democratic parties while ME, PA, RI, and VT also received contributions for a third political party, such as IND and OTH. On the other hand, our graph depicts that MA, NJ, and  NY were the states that supported more than four alternative political parties.
+  
+We chose to further analyze the state of New York due to the significant difference in the contributions made to the alternative political parties. First, we filtered out the Republican and Democratic parties in order to work with a data set that focuses on the other political parties  that are often overshadowed by the binary parties. Then we selected the variables: `name`, `transaction_type`, and  `transaction_amont` to create a second graph. On the y-axis is the name of the committees;  the x-axis represents the amount of dollars that was contributed, and we colored the points by `transactions_type`. This data visual reveals that majority of the contributions were made by non affiliated committees (24k). This information is startling considering that the contributors were not associated with the party that they donated to. The data also show significant amount of  in-kind contributions (24Z) which basically means that they pay for services on other committee’s behalf. Communication cost for candidate received the highest donation (24 F) amount but the committee’s was not listed, we can speculate that  maybe they wanted to be anonymous. Lastly, from this data we can conclude that all contributions towards alternative political parties in the State of New York was in support of the candidates.
+
 
